@@ -22,4 +22,4 @@ jobs:
         with:
           context: .
           push: true
-          tags: tony9301149/my-devops-api:latest
+          tags: tony655210/my-devops-api:latest
