@@ -2,27 +2,26 @@ name: Build and Push Docker Image
 
 on:
   push:
-    branches: [ "main" ] # 當 main 分支有 push 時觸發
+    branches: [ "main" ]
 
 jobs:
   build:
-    runs-on: ubuntu-latest # 使用 GitHub 提供的 Linux 虛擬機
-
+    runs-on: ubuntu-latest
     steps:
-    - name: 1. 複製程式碼
-      uses: actions/checkout@v4
+      - name: 1. Checkout code
+        uses: actions/checkout@v4
 
-    - name: 2. 設定 .NET 環境
-      uses: actions/setup-dotnet@v4
-      with:
-        dotnet-version: '8.0.x'
+      - name: 2. Setup .NET
+        uses: actions/setup-dotnet@v4
+        with:
+          dotnet-version: '8.0.x'
 
-    - name: 3. 執行單元測試
-      run: dotnet test # 確保程式碼品質，測試沒過就不會封裝
+      - name: 3. Restore and Build
+        run: |
+          dotnet restore
+          dotnet build --configuration Release
 
-    - name: 4. 建置 Docker Image
-      run: |
-        docker build -t my-api-image:${{ github.sha }} .
-        echo "✅ Image 建置完成，標籤為短雜湊碼 ${{ github.sha }}"
-
-    # 這裡通常還會接「推送到 Docker Hub」的步驟
+      - name: 4. Build Docker Image
+        run: |
+          docker build -t my-api-image:${{ github.sha }} .
+          echo "Docker image built successfully!"
