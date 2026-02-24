@@ -11,17 +11,15 @@ jobs:
       - name: 1. Checkout code
         uses: actions/checkout@v4
 
-      - name: 2. Setup .NET
-        uses: actions/setup-dotnet@v4
+      - name: 2. Login to Docker Hub
+        uses: docker/login-action@v3
         with:
-          dotnet-version: '8.0.x'
+          username: ${{ secrets.DOCKERHUB_USERNAME }}
+          password: ${{ secrets.DOCKERHUB_TOKEN }}
 
-      - name: 3. Restore and Build
-        run: |
-          dotnet restore
-          dotnet build --configuration Release
-
-      - name: 4. Build Docker Image
-        run: |
-          docker build -t my-api-image:${{ github.sha }} .
-          echo "Docker image built successfully!"
+      - name: 3. Build and Push
+        uses: docker/build-push-action@v5
+        with:
+          context: .
+          push: true
+          tags: tony9301149/my-devops-api:latest
